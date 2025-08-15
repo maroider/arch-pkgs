@@ -1,0 +1,44 @@
+pkgname=pgadmin4
+pkgver=9.6
+pkgrel=1
+pkgdesc='The pgAdmin desktop interface, built from source, with some limitations.'
+arch=('x86_64')
+license=('PostgreSQL')
+url='https://www.pgadmin.org/'
+makedepends=('wget' 'npm' 'unzip')
+depends=('python' 'electron35')
+provides=('pgadmin4')
+source=(
+    pgadmin4-${pkgver}.tar.gz::"https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v9.6/source/pgadmin4-${pkgver}.tar.gz"
+    "config_local.py"
+)
+sha256sums=('14cc35568bc9c9b797bd064507157bee7e57b2e3771e3b72cacce8bbb6664877'
+            'eb7893eba416794cb1ce085f7c1244b83544278f9e8b42d903d3bf87cc241fe0')
+
+build() {
+    # corepack is needed later by the pgAdmin's build process
+    mkdir -p corepack/bin
+    corepack enable yarn --install-directory=corepack/bin
+    export PATH="$PWD/corepack/bin:$PATH"
+
+    cd "$srcdir/pgadmin4-${pkgver}"
+    cp ../config_local.py web/
+
+    export PYTHONDONTWRITEBYTECODE=1
+
+    # Use pgAdmin's existing Linux build automation
+    source pkg/linux/build-functions.sh
+    # trap 'ERRCODE=$? && if [ ${ERRCODE} -ne 0 ]; then echo "The command \"${BASH_COMMAND}\" failed in \"${FUNCNAME}\" with exit code ${ERRCODE}."; fi' EXIT
+    _setup_env "$PWD/pkg/linux/DUMMY-PATH-COMPONENT" "arch"
+    _setup_dirs
+    _create_python_virtualenv "arch"
+    _build_runtime
+    _copy_code "arch"
+}
+
+package() {
+    bld="${srcdir}/pgadmin4-${pkgver}/arch-build"
+    cp -R "${bld}/server/usr" "${pkgdir}"
+    cp -R "${bld}/desktop/usr" "${pkgdir}"
+}
+
