@@ -1,5 +1,5 @@
 pkgname=pgadmin4
-pkgver=9.6
+pkgver=9.7
 pkgrel=1
 pkgdesc='The pgAdmin desktop interface, built from source, with some limitations.'
 arch=('x86_64')
@@ -9,10 +9,10 @@ makedepends=('wget' 'npm' 'unzip')
 depends=('python' 'electron35')
 provides=('pgadmin4')
 source=(
-    pgadmin4-${pkgver}.tar.gz::"https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v9.6/source/pgadmin4-${pkgver}.tar.gz"
+    pgadmin4-${pkgver}.tar.gz::"https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${pkgver}/source/pgadmin4-${pkgver}.tar.gz"
     "config_local.py"
 )
-sha256sums=('14cc35568bc9c9b797bd064507157bee7e57b2e3771e3b72cacce8bbb6664877'
+sha256sums=('02d462d1d2ba9167ed718f34d2cd111689792f891edf7113b177ed640adba589'
             'eb7893eba416794cb1ce085f7c1244b83544278f9e8b42d903d3bf87cc241fe0')
 
 build() {
