@@ -6,7 +6,7 @@ arch=('x86_64')
 license=('PostgreSQL')
 url='https://www.pgadmin.org/'
 makedepends=('wget' 'npm' 'unzip')
-depends=('python' 'electron35')
+depends=('python' 'postgresql-libs' 'krb5' 'electron35')
 provides=('pgadmin4')
 source=(
     pgadmin4-${pkgver}.tar.gz::"https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${pkgver}/source/pgadmin4-${pkgver}.tar.gz"
