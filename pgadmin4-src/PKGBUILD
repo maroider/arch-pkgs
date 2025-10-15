@@ -1,4 +1,4 @@
-pkgname=pgadmin4
+pkgname=pgadmin4-src
 pkgver=9.8
 pkgrel=1
 pkgdesc='The pgAdmin desktop interface, built from source, with some limitations.'
