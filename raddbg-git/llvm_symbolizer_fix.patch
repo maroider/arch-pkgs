@@ -1,0 +1,21 @@
+diff --git i/src/os/core/linux/os_core_linux.c w/src/os/core/linux/os_core_linux.c
+index 13d6bacb..e9059088 100644
+--- i/src/os/core/linux/os_core_linux.c
++++ w/src/os/core/linux/os_core_linux.c
+@@ -1412,7 +1412,15 @@ lnx_signal_handler(int sig, siginfo_t *info, void *arg)
+   {
+     Dl_info info = {0};
+     dladdr(ips[i], &info);
+-    
++
++    char dli_fname_override[256];
++    if (!strcmp(info.dli_fname, "raddbg")) {
++      ssize_t len = readlink("/proc/self/exe", dli_fname_override, sizeof(dli_fname_override) - 1);
++      dli_fname_override[len] = 0;
++      info.dli_fname = dli_fname_override;
++    }
++
+     char cmd[2048];
+     snprintf(cmd, sizeof(cmd), "llvm-symbolizer --relative-address -f -e %s %lu", info.dli_fname, (unsigned long)ips[i] - (unsigned long)info.dli_fbase);
++    // fprintf(stderr,      "[cmd] llvm-symbolizer --relative-address -f -e %s %lu\n", info.dli_fname, (unsigned long)ips[i] - (unsigned long)info.dli_fbase);
+     FILE *f = popen(cmd, "r");

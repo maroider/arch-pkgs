@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=RAD Debugger
+Comment=A native, user-mode, multi-process, graphical debugger. 
+# Path=/usr/bin/
+Exec=raddbg
+Icon=raddbg
+Terminal=false
+Categories=Development;Debugger

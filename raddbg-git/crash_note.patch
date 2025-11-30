@@ -1,0 +1,12 @@
+diff --git i/src/os/core/linux/os_core_linux.c w/src/os/core/linux/os_core_linux.c
+index 13d6bacb..9e1e8e3c 100644
+--- i/src/os/core/linux/os_core_linux.c
++++ w/src/os/core/linux/os_core_linux.c
+@@ -1406,6 +1406,7 @@ lnx_signal_handler(int sig, siginfo_t *info, void *arg)
+   int ips_count = backtrace(ips, ArrayCount(ips));
+   
+   fprintf(stderr, "A fatal signal was received: %s (%d). The process is terminating.\n", strsignal(sig), sig);
++  fprintf(stderr, "(Packager's Note: Linux is still not \"officially\" supported, so regular \"bother the packager first\" rule should apply.)\n");
+   fprintf(stderr, "Create a new issue with this report at %s.\n\n", BUILD_ISSUES_LINK_STRING_LITERAL);
+   fprintf(stderr, "Callstack:\n");
+   for EachIndex(i, ips_count)

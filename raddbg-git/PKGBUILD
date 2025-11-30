@@ -1,0 +1,72 @@
+pkgname=raddbg-git
+_reponame=raddebugger
+pkgver=r3577.08642d27
+pkgrel=1
+pkgdesc='A native, user-mode, multi-process, graphical debugger.'
+arch=('x86_64')
+license=('MIT')
+url="https://github.com/EpicGamesExt/$_reponame"
+makedepends=(
+    # GCC fails on a header include issue, and then just fails to compile if we fix that...
+    'clang'
+    'imagemagick'
+)
+# One-liner to check for package deps:
+# ldd build/raddbg | rg -o '\S*\.so\S* =>' | rg -v "ld-linux" | sed 's/ =>//' | xargs -ILIB pacman -Qoq /usr/lib/LIB | sort | uniq
+depends=(
+    'brotli'
+    'bzip2'
+    'freetype2'
+    'libglvnd'
+    'libpng'
+    # Contains libx11 and other lower-level bits
+    'libxext'
+    # raddbg uses llvm-symbolizer
+    'llvm'
+    'zlib'
+)
+provides=('raddbg')
+source=(
+    "git+$url.git"
+    'llvm_symbolizer_fix.patch'
+    'crash_note.patch'
+    'build.sh.patch'
+    'raddbg.desktop'
+)
+sha256sums=(
+    'SKIP'
+    'faa6bdf004db1b2c6467ab82ebc237df43d58e82f25476a99b6c88df2cca0e76'
+    'a637b30bbb9a21f75eb7a8fc2fb01d6faf3bd561b5fba994a139ee4490091739'
+    '806e299ad88c700e6c0f5f9590ab4a5667ef0f8dc39937ba826e8d1fb918133a'
+    'fecddb21fbb81496a54c8835b02f4731b02562d5aed93f24ff8ca5242e31a736'
+)
+
+pkgver() {
+    cd "$srcdir/$_reponame"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd "$srcdir/$_reponame"
+    # Disabled for now since GCC won't built this anyway...
+    # git apply ../build.sh.patch
+    git apply ../crash_note.patch
+    git apply ../llvm_symbolizer_fix.patch
+    sh build.sh release raddbg
+    sh build.sh release radbin
+    # NOTE: Borked for now
+    # sh build.sh release radlink
+    magick data/logo.ico build/logo.png
+}
+
+package() {
+    pushd "$srcdir/$_reponame"
+    install -D -m644 "LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -D -m755 "build/raddbg" "$pkgdir/usr/bin/raddbg"
+    install -D -m755 "build/radbin" "$pkgdir/usr/bin/radbin"
+    # install -D -m755 "build/radlink" "$pkgdir/usr/bin/radlink"
+    install -D -m644 "build/logo.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/raddbg.png"
+    popd
+    install -D -m644 "raddbg.desktop" "$pkgdir/usr/share/applications/raddbg.desktop"
+}
+
